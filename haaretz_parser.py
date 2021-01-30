@@ -12,6 +12,9 @@ class HaaretzParser(RSSParser):
         RSSParser.__init__(self, HAARETZ_RSS)
         self.tz = tz
 
+    def should_use_first_item_dedup(self):
+        return True
+
     def entry_to_dict(self, article):
         article_dict = dict()
         article_dict['article_id'] = article.guid
