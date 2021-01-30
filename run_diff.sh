@@ -6,9 +6,10 @@ export NYT_TWITTER_CONSUMER_SECRET=""
 export NYT_TWITTER_ACCESS_TOKEN=""
 export NYT_TWITTER_ACCESS_TOKEN_SECRET=""
 
-export NYT_API_KEY=""
-export RSS_URL=""
+export PHANTOMJS_PATH="/usr/local/bin/phantomjs"
 
-export PHANTOMJS_PATH="./"
+export OPENSSL_CONF=/etc/ssl/
 
-python nytdiff.py
+source venv/bin/activate
+python main.py
+deactivate
