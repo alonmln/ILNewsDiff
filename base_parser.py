@@ -117,18 +117,16 @@ class BaseParser():
         self.tweet_change(previous_version['abstract'], data['abstract'], "שינוי בתת כותרת", article_id, url)
 
     def loop_entries(self, entries):
-        article = None  # For Exception logging
         current_ids = set()
-        try:
-            articles = {}
-            for article in entries:
+        articles = {}
+        for article in entries:
+            try:
                 article_dict = self.entry_to_dict(article)
                 if article_dict['article_id'] not in articles or not self.should_use_first_item_dedup():
                     articles[article_dict['article_id']] = article_dict
-            for article_dict in articles.values():
-                self.store_data(article_dict)
-                current_ids.add(article_dict['article_id'])
-                self.data_provider.remove_old(current_ids)
-        except BaseException as e:
-            logging.exception(f'Problem looping entry: {article}')
-            print('Exception: {}'.format(str(e)))
+                for article_dict in articles.values():
+                    self.store_data(article_dict)
+                    current_ids.add(article_dict['article_id'])
+                    self.data_provider.remove_old(current_ids)
+            except BaseException as e:
+                logging.exception(f'Problem looping entry: {article}')
