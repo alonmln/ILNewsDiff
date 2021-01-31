@@ -3,7 +3,6 @@ import hashlib
 from datetime import datetime
 
 from validators import validate_string_in_html
-from html_utils import strip_html
 from rss_parser import RSSParser
 
 HAARETZ_RSS = "https://www.haaretz.co.il/cmlink/1.1617539"
@@ -31,7 +30,7 @@ class HaaretzParser(RSSParser):
         article_dict['article_source'] = self.get_source()
         article_dict['url'] = article.link
         article_dict['title'] = article.title
-        article_dict['abstract'] = strip_html(article['description'])
+        article_dict['abstract'] = article['description']
         od = collections.OrderedDict(sorted(article_dict.items()))
         article_dict['hash'] = hashlib.sha224(
             repr(od.items()).encode('utf-8')).hexdigest()

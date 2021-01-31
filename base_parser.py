@@ -99,9 +99,9 @@ class BaseParser:
     def should_tweet(self, url: str, previous_data: str, current_data: str):
         if len(previous_data) == 0 or len(current_data) == 0:
             logging.info('Old or New empty')
-            return
+            return False
         if previous_data == current_data:
-            return
+            return False
         if not self.validate_change(url, previous_data, current_data):
             return
 
