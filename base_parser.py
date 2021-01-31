@@ -3,9 +3,7 @@ import os
 import time
 from typing import Dict
 
-import bleach
 import requests
-from bs4 import BeautifulSoup
 
 from data_provider import DataProvider
 from twitter_helper import upload_media, tweet_text, tweet_with_media
@@ -49,12 +47,6 @@ class BaseParser:
             return False
         return True
 
-    @staticmethod
-    def html_validator(url: str, new: str):
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, "html.parser")
-        return soup.find(new) is not None
-
     def tweet(self, text: str, article_id: str, url: str, image_path: str):
         image_id = upload_media(image_path)
         logging.info(f'Media ready with id: {image_id}')
@@ -72,27 +64,6 @@ class BaseParser:
         tweet_id = time.time() if TESTING else tweet.id
         logging.info(f'Id to store: {tweet_id}')
         self.data_provider.update_tweet_db(article_id, self.get_source(), tweet_id)
-
-    @staticmethod
-    def get_page(url, header=None, payload=None):
-        r = None
-        for x in range(MAX_RETRIES):
-            try:
-                r = requests.get(url=url, headers=header, params=payload)
-            except BaseException as e:
-                if x == MAX_RETRIES - 1:
-                    print('Max retries reached')
-                    logging.warning('Max retries for: %s', url)
-                    return None
-                if '104' not in str(e):
-                    print('Problem with url {}'.format(url))
-                    print('Exception: {}'.format(str(e)))
-                    logging.exception('Problem getting page')
-                    return None
-                time.sleep(RETRY_DELAY)
-            else:
-                break
-        return r
 
     def store_data(self, data: Dict):
         if self.data_provider.is_article_tracked(data['article_id'], self.get_source()):
@@ -138,18 +109,3 @@ class BaseParser:
                 self.store_data(article_dict)
             except BaseException as e:
                 logging.exception(f'Problem looping entry: {article_dict}')
-
-    @staticmethod
-    def _strip_html(html: str):
-        """
-        a wrapper for bleach.clean() that strips ALL tags from the input
-        """
-        tags = []
-        attr = {}
-        styles = []
-        strip = True
-        return bleach.clean(html,
-                            tags=tags,
-                            attributes=attr,
-                            styles=styles,
-                            strip=strip)

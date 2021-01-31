@@ -3,7 +3,9 @@ import hashlib
 from datetime import datetime
 
 from base_parser import BaseParser
+from html_utils import strip_html
 from rss_parser import RSSParser
+from validators import html_validator
 
 ISRAEL_HAYOM_RSS = "https://www.israelhayom.co.il/rss.xml"
 
@@ -21,7 +23,7 @@ class IsraelHayomParser(RSSParser):
         return True
 
     def _validate_change(self, url: str, new: str):
-        return BaseParser.html_validator(url, new)
+        return html_validator(url, new)
 
     def entry_to_dict(self, article):
         article_dict = dict()
@@ -29,7 +31,7 @@ class IsraelHayomParser(RSSParser):
         article_dict['article_source'] = self.get_source()
         article_dict['url'] = article.link
         article_dict['title'] = article.title
-        article_dict['abstract'] = self._strip_html(article['description'])
+        article_dict['abstract'] = strip_html(article['description'])
         od = collections.OrderedDict(sorted(article_dict.items()))
         article_dict['hash'] = hashlib.sha224(
             repr(od.items()).encode('utf-8')).hexdigest()
