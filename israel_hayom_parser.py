@@ -2,8 +2,8 @@ import collections
 import hashlib
 from datetime import datetime
 
-from rss_parser import RSSParser
 from validators import validate_string_in_html
+from rss_parser import RSSParser
 
 ISRAEL_HAYOM_RSS = "https://www.israelhayom.co.il/rss.xml"
 
