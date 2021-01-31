@@ -2,10 +2,9 @@ import collections
 import hashlib
 from datetime import datetime
 
-from base_parser import BaseParser
 from html_utils import strip_html
 from rss_parser import RSSParser
-from validators import html_validator
+from validators import validate_string_in_html
 
 HAARETZ_RSS = "https://www.haaretz.co.il/cmlink/1.1617539"
 
@@ -23,7 +22,7 @@ class HaaretzParser(RSSParser):
         return True
 
     def _validate_change(self, url: str, new: str):
-        return html_validator(url, new)
+        return validate_string_in_html(url, new)
 
     def entry_to_dict(self, article):
         article_dict = dict()

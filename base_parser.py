@@ -71,12 +71,32 @@ class BaseParser:
                     'article_id'], self.get_source(), data['hash'])
             if count != 1:  # Changed
                 self.tweet_all_changes(data)
-                self.data_provider.increase_article_version(data)
         else:
             self.data_provider.track_article(data)
 
-    def tweet_change(self, previous_data: str, current_data: str,
-                     tweet_text: str, article_id: str, url: str):
+    def tweet_change(self, previous_data: str, current_data: str, text_to_tweet: str, article_id: str, url: str):
+        saved_image_diff_path = generate_image_diff(previous_data, current_data)
+        self.tweet(text_to_tweet, article_id, url, saved_image_diff_path)
+
+    def tweet_all_changes(self, data: Dict):
+        article_id = data['article_id']
+        url = data['url']
+        previous_version = self.data_provider.get_previous_article_version(article_id, self.get_source())
+
+        save_to_db = False
+
+        if self.should_tweet(url, previous_version['title'], data['title']):
+            self.tweet_change(previous_version['title'], data['title'], "שינוי בכותרת", article_id, url)
+            save_to_db = True
+
+        if self.should_tweet(url, previous_version['abstract'], data['abstract']):
+            self.tweet_change(previous_version['abstract'], data['abstract'], "שינוי בתת כותרת", article_id, url)
+            save_to_db = True
+
+        if save_to_db:
+            self.data_provider.increase_article_version(data)
+
+    def should_tweet(self, url: str, previous_data: str, current_data: str):
         if len(previous_data) == 0 or len(current_data) == 0:
             logging.info('Old or New empty')
             return
@@ -85,15 +105,7 @@ class BaseParser:
         if not self.validate_change(url, previous_data, current_data):
             return
 
-        saved_image_diff_path = generate_image_diff(previous_data, current_data)
-        self.tweet(tweet_text, article_id, url, saved_image_diff_path)
-
-    def tweet_all_changes(self, data: Dict):
-        article_id = data['article_id']
-        url = data['url']
-        previous_version = self.data_provider.get_previous_article_version(article_id, self.get_source())
-        self.tweet_change(previous_version['title'], data['title'], "שינוי בכותרת", article_id, url)
-        self.tweet_change(previous_version['abstract'], data['abstract'], "שינוי בתת כותרת", article_id, url)
+        return True
 
     def loop_entries(self, entries):
         articles = {}

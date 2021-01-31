@@ -7,11 +7,16 @@ from PIL import Image
 from simplediff import html_diff
 from selenium import webdriver
 
+from html_utils import strip_html
+
 PHANTOMJS_PATH = os.environ['PHANTOMJS_PATH']
 
+
 def generate_image_diff(old: str, new: str):
-    new_hash = hashlib.sha224(new.encode('utf8')).hexdigest()
-    logging.info(html_diff(old, new))
+    stripped_old = strip_html(old)
+    stripped_new = strip_html(new)
+    new_hash = hashlib.sha224(stripped_new.encode('utf8')).hexdigest()
+    logging.info(html_diff(stripped_old, stripped_new))
     html = """
     <!doctype html>
     <html lang="en">
