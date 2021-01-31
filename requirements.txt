@@ -20,3 +20,4 @@ simplediff==1.0
 six==1.10.0
 SQLAlchemy==1.3.6
 tweepy==3.10.0
+beautifulsoup4==4.9.3

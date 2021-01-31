@@ -3,7 +3,9 @@ import os
 import time
 from typing import Dict
 
+import bleach
 import requests
+from bs4 import BeautifulSoup
 
 from data_provider import DataProvider
 from twitter_helper import upload_media, tweet_text, tweet_with_media
@@ -21,7 +23,7 @@ MAX_RETRIES = 10
 RETRY_DELAY = 3
 
 
-class BaseParser():
+class BaseParser:
     def __init__(self):
         self.data_provider = DataProvider()
 
@@ -37,6 +39,21 @@ class BaseParser():
     @staticmethod
     def get_source():
         raise NotImplemented()
+
+    def _validate_change(self, url: str, new: str):
+        return True
+
+    def validate_change(self, url: str, old: str, new: str):
+        if not self._validate_change(url, new):
+            logging.info(f"Detected error. old was {old} new was {new} url {url}")
+            return False
+        return True
+
+    @staticmethod
+    def html_validator(url: str, new: str):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, "html.parser")
+        return soup.find(new) is not None
 
     def tweet(self, text: str, article_id: str, url: str, image_path: str):
         image_id = upload_media(image_path)
@@ -94,6 +111,9 @@ class BaseParser():
             return
         if previous_data == current_data:
             return
+        if not self.validate_change(url, previous_data, current_data):
+            return
+
         saved_image_diff_path = generate_image_diff(previous_data, current_data)
         self.tweet(tweet_text, article_id, url, saved_image_diff_path)
 
@@ -118,3 +138,18 @@ class BaseParser():
                 self.store_data(article_dict)
             except BaseException as e:
                 logging.exception(f'Problem looping entry: {article_dict}')
+
+    @staticmethod
+    def _strip_html(html: str):
+        """
+        a wrapper for bleach.clean() that strips ALL tags from the input
+        """
+        tags = []
+        attr = {}
+        styles = []
+        strip = True
+        return bleach.clean(html,
+                            tags=tags,
+                            attributes=attr,
+                            styles=styles,
+                            strip=strip)
