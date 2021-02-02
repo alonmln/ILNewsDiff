@@ -2,7 +2,7 @@ from pytz import timezone
 
 import feedparser
 
-import validators
+from validators import html_validator
 from israel_hayom_parser import IsraelHayomParser as Parser
 
 TIMEZONE = 'Israel'
@@ -23,9 +23,9 @@ def main():
         url = entry_dict["url"]
         title = entry_dict["title"]
         description = entry_dict["abstract"]
-        if not validators.validate_string_in_html(url, title):
+        if not html_validator.validate_string_in_html(url, title):
             print(f"Could not find title \n{title} \nin {url}")
-        if not validators.validate_string_in_html(url, description):
+        if not html_validator.validate_string_in_html(url, description):
             print(f"Could not find description \n{description}\nin {url}")
 
     print("Finished iterating")

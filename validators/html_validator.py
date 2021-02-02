@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def validate_string_in_html(url: str, string_to_validate: str):
+def validate_change(url: str, old: str, new: str):
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
-    return soup.find(string=string_to_validate) is not None
+    return soup.find(string=new) is not None

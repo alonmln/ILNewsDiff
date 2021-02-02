@@ -38,13 +38,14 @@ class BaseParser:
     def get_source():
         raise NotImplemented()
 
-    def _validate_change(self, url: str, new: str):
-        return True
+    def get_validators(self):
+        raise []
 
     def validate_change(self, url: str, old: str, new: str):
-        if not self._validate_change(url, new):
-            logging.info(f"Detected error. old was {old} new was {new} url {url}")
-            return False
+        for validator in self.get_validators():
+            if not validator.validate_change(url, old, new):
+                logging.info(f"Detected error. old was \n{old}\n new was \n{new}\n url {url}")
+                return False
         return True
 
     def tweet(self, text: str, article_id: str, url: str, image_path: str):
