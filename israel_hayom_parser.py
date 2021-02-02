@@ -2,6 +2,7 @@ import collections
 import hashlib
 from datetime import datetime
 
+import validators.content_validator
 from rss_parser import RSSParser
 
 ISRAEL_HAYOM_RSS = "https://www.israelhayom.co.il/rss.xml"
@@ -18,6 +19,9 @@ class IsraelHayomParser(RSSParser):
         
     def should_use_first_item_dedup(self):
         return True
+
+    def get_tweet_validators(self):
+        return [validators.content_validator]
 
     def entry_to_dict(self, article):
         article_dict = dict()

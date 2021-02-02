@@ -3,6 +3,7 @@ import hashlib
 from datetime import datetime
 
 import validators.html_validator
+import validators.content_validator
 from rss_parser import RSSParser
 
 HAARETZ_RSS = "https://www.haaretz.co.il/cmlink/1.1617539"
@@ -20,8 +21,11 @@ class HaaretzParser(RSSParser):
     def should_use_first_item_dedup(self):
         return True
 
-    def get_validators(self):
+    def get_integrity_validators(self):
         return [validators.html_validator]
+
+    def get_tweet_validators(self):
+        return [validators.content_validator]
 
     def entry_to_dict(self, article):
         article_dict = dict()

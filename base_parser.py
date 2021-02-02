@@ -38,13 +38,17 @@ class BaseParser:
     def get_source():
         raise NotImplemented()
 
-    def get_validators(self):
-        raise []
+    def get_integrity_validators(self):
+        return []
 
-    def validate_change(self, url: str, old: str, new: str):
-        for validator in self.get_validators():
+    def get_tweet_validators(self):
+        return []
+
+    @staticmethod
+    def validate(validators: list, url: str, old: str, new: str):
+        for validator in validators:
             if not validator.validate_change(url, old, new):
-                logging.info(f"Detected error. old was \n{old}\n new was \n{new}\n url {url}")
+                logging.info(f"Detected error. old was \n{old}\n new was \n{new}\n url {url} type: {validator.__name__}")
                 return False
         return True
 
@@ -88,23 +92,24 @@ class BaseParser:
 
         if self.should_tweet(url, previous_version['title'], data['title']):
             self.tweet_change(previous_version['title'], data['title'], "שינוי בכותרת", article_id, url)
-            save_to_db = True
+            if self.validate(self.get_integrity_validators(), url, previous_version['title'], data['title']):
+                save_to_db = True
 
         if self.should_tweet(url, previous_version['abstract'], data['abstract']):
             self.tweet_change(previous_version['abstract'], data['abstract'], "שינוי בתת כותרת", article_id, url)
-            save_to_db = True
+            if self.validate(self.get_integrity_validators(), url, previous_version['abstract'], data['abstract']):
+                save_to_db = True
 
         if save_to_db:
             self.data_provider.increase_article_version(data)
 
     def should_tweet(self, url: str, previous_data: str, current_data: str):
         if len(previous_data) == 0 or len(current_data) == 0:
-            logging.info('Old or New empty')
             return False
         if previous_data == current_data:
             return False
-        if not self.validate_change(url, previous_data, current_data):
-            return
+        if not self.validate(self.get_tweet_validators(), url, previous_data, current_data):
+            return False
 
         return True
 
