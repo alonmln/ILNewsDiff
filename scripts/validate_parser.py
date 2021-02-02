@@ -23,9 +23,9 @@ def main():
         url = entry_dict["url"]
         title = entry_dict["title"]
         description = entry_dict["abstract"]
-        if not html_validator.validate_string_in_html(url, title):
+        if not html_validator.validate_change(url, "", title):
             print(f"Could not find title \n{title} \nin {url}")
-        if not html_validator.validate_string_in_html(url, description):
+        if not html_validator.validate_change(url, "", description):
             print(f"Could not find description \n{description}\nin {url}")
 
     print("Finished iterating")
