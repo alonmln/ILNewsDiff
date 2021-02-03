@@ -48,7 +48,8 @@ class BaseParser:
     def validate(validators: list, url: str, old: str, new: str):
         for validator in validators:
             if not validator.validate_change(url, old, new):
-                logging.info(f"Detected error. old was \n{old}\n new was \n{new}\n url {url} type: {validator.__name__}")
+                logging.info(
+                    f"Detected error. old was \n{old}\n new was \n{new}\n url {url} type: {validator.__name__}")
                 return False
         return True
 
@@ -73,7 +74,7 @@ class BaseParser:
     def store_data(self, data: Dict):
         if self.data_provider.is_article_tracked(data['article_id'], self.get_source()):
             count = self.data_provider.get_article_version_count(data[
-                    'article_id'], self.get_source(), data['hash'])
+                                                                     'article_id'], self.get_source(), data['hash'])
             if count != 1:  # Changed
                 self.tweet_all_changes(data)
         else:
@@ -90,15 +91,15 @@ class BaseParser:
 
         save_to_db = False
 
-        if self.should_tweet(url, previous_version['title'], data['title']):
-            self.tweet_change(previous_version['title'], data['title'], "שינוי בכותרת", article_id, url)
-            if self.validate(self.get_integrity_validators(), url, previous_version['title'], data['title']):
-                save_to_db = True
+        if self.validate(self.get_integrity_validators(), url, previous_version['title'], data['title']):
+            save_to_db = True
+            if self.should_tweet(url, previous_version['title'], data['title']):
+                self.tweet_change(previous_version['title'], data['title'], "שינוי בכותרת", article_id, url)
 
-        if self.should_tweet(url, previous_version['abstract'], data['abstract']):
-            self.tweet_change(previous_version['abstract'], data['abstract'], "שינוי בתת כותרת", article_id, url)
-            if self.validate(self.get_integrity_validators(), url, previous_version['abstract'], data['abstract']):
-                save_to_db = True
+        if self.validate(self.get_integrity_validators(), url, previous_version['abstract'], data['abstract']):
+            save_to_db = True
+            if self.should_tweet(url, previous_version['abstract'], data['abstract']):
+                self.tweet_change(previous_version['abstract'], data['abstract'], "שינוי בתת כותרת", article_id, url)
 
         if save_to_db:
             self.data_provider.increase_article_version(data)

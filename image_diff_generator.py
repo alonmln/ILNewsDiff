@@ -12,7 +12,7 @@ from html_utils import strip_html
 class ImageDiffGenerator:
     html_template = None
     driver = None
-    PHANTOMJS_PATH = None
+    phantomjs_path = None
 
     @staticmethod
     def init():
@@ -20,8 +20,8 @@ class ImageDiffGenerator:
             with open("template.html", "r", encoding="utf-8") as html_file:
                 ImageDiffGenerator.html_template = html_file.read()
 
-            ImageDiffGenerator.PHANTOMJS_PATH = os.environ['PHANTOMJS_PATH']
-            ImageDiffGenerator.driver = webdriver.PhantomJS(executable_path=ImageDiffGenerator.PHANTOMJS_PATH)
+            ImageDiffGenerator.phantomjs_path = os.environ['PHANTOMJS_PATH']
+            ImageDiffGenerator.driver = webdriver.PhantomJS(executable_path=ImageDiffGenerator.phantomjs_path)
 
     @staticmethod
     def generate_image_diff(old: str, new: str, text_to_tweet: str):
