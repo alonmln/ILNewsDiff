@@ -71,18 +71,21 @@ class BaseParser:
         logging.info(f'Id to store: {tweet_id}')
         self.data_provider.update_tweet_db(article_id, self.get_source(), tweet_id)
 
-    def store_data(self, data: Dict):
+    def handle_articles(self, data: Dict):
         if self.data_provider.is_article_tracked(data['article_id'], self.get_source()):
-            count = self.data_provider.get_article_version_count(data[
-                                                                     'article_id'], self.get_source(), data['hash'])
+            count = self.data_provider.get_article_version_count(data['article_id'], self.get_source(), data['hash'])
             if count != 1:  # Changed
                 self.tweet_all_changes(data)
         else:
             self.data_provider.track_article(data)
 
     def tweet_change(self, previous_data: str, current_data: str, text_to_tweet: str, article_id: str, url: str):
-        saved_image_diff_path = ImageDiffGenerator.generate_image_diff(previous_data, current_data, text_to_tweet)
+        saved_image_diff_path = ImageDiffGenerator.generate_text_diff(previous_data, current_data, text_to_tweet)
         self.tweet(text_to_tweet, article_id, url, saved_image_diff_path)
+
+    def tweet_image_change(self, old_url: str, new_url: str, article_id: str, url: str):
+        saved_image_diff_path = ImageDiffGenerator.generate_image_diff(old_url, new_url, "שינוי בתמונה")
+        self.tweet("שינוי בתמונה", article_id, url, saved_image_diff_path)
 
     def tweet_all_changes(self, data: Dict):
         article_id = data['article_id']
@@ -100,6 +103,11 @@ class BaseParser:
             save_to_db = True
             if self.should_tweet(url, previous_version['abstract'], data['abstract']):
                 self.tweet_change(previous_version['abstract'], data['abstract'], "שינוי בתת כותרת", article_id, url)
+
+        if data["image"] and previous_version["image"] and data["image"] != previous_version["image"]:
+            # TODO: Add validator if image is up
+            save_to_db = True
+            self.tweet_image_change(previous_version["image"], data["image"], article_id, url)
 
         if save_to_db:
             self.data_provider.increase_article_version(data)
@@ -125,6 +133,6 @@ class BaseParser:
                 logging.exception(f'Problem looping entry: {article}')
         for article_dict in articles.values():
             try:
-                self.store_data(article_dict)
+                self.handle_articles(article_dict)
             except BaseException as e:
                 logging.exception(f'Problem looping entry: {article_dict}')

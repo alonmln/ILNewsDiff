@@ -25,4 +25,9 @@ class HaaretzParser(RSSParser):
         return [validators.content_validator]
 
     def entry_to_dict(self, article):
-        return parser_utils.standard_entry_to_dict(article, self.get_source(), self.tz)
+        article_dict = parser_utils.standard_entry_to_dict(article, self.get_source(), self.tz)
+        media = None
+        if len(article.media_content) > 0:
+            media = article.media_content[0]["url"]
+        article_dict["image"] = media
+        return article_dict

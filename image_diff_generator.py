@@ -10,30 +10,45 @@ from html_utils import strip_html
 
 
 class ImageDiffGenerator:
-    html_template = None
+    text_diff_template = None
+    image_diff_template = None
     driver = None
     phantomjs_path = None
 
     @staticmethod
     def init():
-        if ImageDiffGenerator.html_template is None:
-            with open("template.html", "r", encoding="utf-8") as html_file:
-                ImageDiffGenerator.html_template = html_file.read()
+        if ImageDiffGenerator.text_diff_template is None:
+            with open("text_template.html", "r", encoding="utf-8") as html_file:
+                ImageDiffGenerator.text_diff_template = html_file.read()
+
+            with open("image_template.html", "r", encoding="utf-8") as html_file:
+                ImageDiffGenerator.image_diff_template = html_file.read()
 
             ImageDiffGenerator.phantomjs_path = os.environ['PHANTOMJS_PATH']
             ImageDiffGenerator.driver = webdriver.PhantomJS(executable_path=ImageDiffGenerator.phantomjs_path)
 
     @staticmethod
-    def generate_image_diff(old: str, new: str, text_to_tweet: str):
+    def generate_text_diff(old: str, new: str, text_to_tweet: str):
         ImageDiffGenerator.init()
         stripped_old = strip_html(old)
         stripped_new = strip_html(new)
         new_hash = hashlib.sha224(stripped_new.encode('utf8')).hexdigest()
         diff_html = html_diff(stripped_old, stripped_new)
 
-        html = ImageDiffGenerator.html_template.replace("text_to_tweet", text_to_tweet) \
-            .replace("diff_html", diff_html)
+        html = ImageDiffGenerator.text_diff_template.replace("text_to_tweet", text_to_tweet).replace("diff_html",
+                                                                                                     diff_html)
+        return ImageDiffGenerator.generate_image(html, new_hash)
 
+    @staticmethod
+    def generate_image_diff(old: str, new: str, text_to_tweet: str):
+        ImageDiffGenerator.init()
+        html = ImageDiffGenerator.image_diff_template.replace("old_img", old).replace("new_img", new).replace("text_to_tweet",
+                                                                                                     text_to_tweet)
+        new_hash = hashlib.sha224(new.encode('utf8')).hexdigest()
+        return ImageDiffGenerator.generate_image(html, new_hash)
+
+    @staticmethod
+    def generate_image(html, diff_hash):
         with open('tmp.html', 'w', encoding="utf-8") as f:
             f.write(html)
 
@@ -47,7 +62,7 @@ class ImageDiffGenerator:
         block_width = e.size['width']
         end_width = start_width
         total_height = start_height + block_height + end_height
-        total_width = 510  # Override because body width is set to 500
+        total_width = 520  # Override because body width is set to 500
         timestamp = str(int(time.time()))
         ImageDiffGenerator.driver.save_screenshot('./tmp.png')
         img = Image.open('./tmp.png')
@@ -65,7 +80,7 @@ class ImageDiffGenerator:
             offset = (int((bg_w - total_width) / 2),
                       int((bg_h - total_height) / 2))
         background.paste(img2, offset)
-        filename = timestamp + new_hash
+        filename = timestamp + diff_hash
         saved_file_path = f'./output/{filename}.png'
         background.save(saved_file_path)
         return saved_file_path

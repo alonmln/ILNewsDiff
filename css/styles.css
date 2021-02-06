@@ -23,17 +23,17 @@ p {
 }
 
 del {
-   background-color: lightpink;
-   color: black;
-   text-decoration: line-through;
-   font-weight: lighter;
+    background-color: lightpink;
+    color: black;
+    text-decoration: line-through;
+    font-weight: lighter;
 }
 
 ins {
-  background-color: aquamarine;
-  color: black;
-  text-decoration: none;
-  font-weight: bold;
+    background-color: aquamarine;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
 }
 
 img {
@@ -43,14 +43,36 @@ img {
     width: 30px;
 }
 
+#wrapper {
+    padding-right: 10px;
+}
+
 .alignleft {
     margin-right: 0em;
-
     font-size: 14px;
-    text-align:left;
-    direction:ltr;
-    color:gray
+    text-align: left;
+    direction: ltr;
+    color: gray
 }
+
 .alignright {
-    float:right;
+    float: right;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 500px;
+    margin-top: 10px;
+}
+
+.img {
+    width: 175px;
+    height: 100px;
+}
+
+.padded {
+    padding-left: 50px;
+    padding-right: 50px;
 }
