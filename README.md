@@ -26,7 +26,7 @@ A change that
 
 Installation
 ------------
-+ The [phantomjs](http://phantomjs.org/) binary needs to be installed and the path updated in the run_diff.sh file.
++ The [phantomjs](http://phantomjs.org/) binary needs to be installed, and the path updated in the run_diff.sh file.
 + `pip install -r requirements.txt`
 
 [Twitter keys](https://dev.twitter.com/) are needed.

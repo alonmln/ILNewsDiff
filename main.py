@@ -18,7 +18,7 @@ if 'LOG_FOLDER' in os.environ:
 else:
     LOG_FOLDER = ''
 
-x = 3
+
 def main():
     # logging
     logging_filehandler = logging.FileHandler(filename=LOG_FOLDER + 'titlediff.log',
