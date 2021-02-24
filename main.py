@@ -44,7 +44,7 @@ def main():
             logging.info(f"Parsing {parser.get_source()}")
             parser.parse()
         logging.debug('Finished')
-    except:
+    except Exception:
         logging.exception('Parser')
 
     logging.info('Finished script')

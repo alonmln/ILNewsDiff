@@ -18,4 +18,4 @@ class RSSParser(BaseParser):
             return
         else:
             logging.info('Parsing %s', r.channel.title)
-        self.loop_entries(r.entries)           
+        self.loop_entries(r.entries)

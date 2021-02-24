@@ -43,9 +43,6 @@ class ImageDiffGenerator:
         start_height = e.location['y']
         block_height = e.size['height']
         end_height = start_height
-        start_width = e.location['x']
-        block_width = e.size['width']
-        end_width = start_width
         total_height = start_height + block_height + end_height
         total_width = 510  # Override because body width is set to 500
         timestamp = str(int(time.time()))

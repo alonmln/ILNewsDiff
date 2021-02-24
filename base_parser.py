@@ -3,8 +3,6 @@ import os
 import time
 from typing import Dict
 
-import requests
-
 from data_provider import DataProvider
 from twitter_helper import upload_media, tweet_text, tweet_with_media
 from image_diff_generator import ImageDiffGenerator
@@ -26,17 +24,17 @@ class BaseParser:
         self.data_provider = DataProvider()
 
     def parse(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def entry_to_dict(self, article):
-        raise NotImplemented
+        raise NotImplementedError
 
     def should_use_first_item_dedup(self):
-        return NotImplemented
+        return NotImplementedError
 
     @staticmethod
     def get_source():
-        raise NotImplemented()
+        raise NotImplementedError
 
     def get_integrity_validators(self):
         return []
@@ -121,10 +119,10 @@ class BaseParser:
                 article_dict = self.entry_to_dict(article)
                 if article_dict['article_id'] not in articles or not self.should_use_first_item_dedup():
                     articles[article_dict['article_id']] = article_dict
-            except BaseException as e:
+            except BaseException:
                 logging.exception(f'Problem looping entry: {article}')
         for article_dict in articles.values():
             try:
                 self.store_data(article_dict)
-            except BaseException as e:
+            except BaseException:
                 logging.exception(f'Problem looping entry: {article_dict}')

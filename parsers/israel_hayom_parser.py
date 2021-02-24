@@ -13,7 +13,7 @@ class IsraelHayomParser(RSSParser):
     @staticmethod
     def get_source():
         return "IsraelHayom"
-        
+
     def should_use_first_item_dedup(self):
         return True
 
@@ -22,4 +22,3 @@ class IsraelHayomParser(RSSParser):
 
     def entry_to_dict(self, article):
         return parser_utils.standard_entry_to_dict(article, self.get_source(), self.tz)
-

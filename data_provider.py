@@ -1,11 +1,10 @@
 import logging
-from typing import Dict, Set
-from datetime import datetime
+from typing import Dict
 
 import dataset
 
-class DataProvider():
 
+class DataProvider:
     def __init__(self):
         self.db = dataset.connect('sqlite:///titles.db')
         self.articles_table = self.db['rss_ids']
@@ -25,7 +24,7 @@ class DataProvider():
         data['version'] = 1
         self.versions_table.insert(data)
         logging.info(f"New article tracked: {data['url']}")
-    
+
     def get_article_version_count(self, artice_id: str, article_source: str, hash: str):
         return self.versions_table.count(
                 self.versions_table.table.columns.article_id == artice_id,
@@ -53,7 +52,7 @@ class DataProvider():
         }
         self.articles_table.update(article, ['article_id', 'article_source'])
         logging.debug('Updated tweet ID in db')
-    
+
     def get_previous_tweet_id(self, article_id: str, article_source: str):
         search = self.articles_table.find_one(article_id=article_id, article_source=article_source)
         if search is None or 'tweet_id' not in search:
