@@ -11,7 +11,7 @@ Currently tracking:
  
 How does it work?
 ------------
-Once a minute the code queries news RSS feeds and compares them to a previous state saved in a local SQLite DB.
+Once a minute the code queries news feeds and compares them to a previous state saved in a local SQLite DB.
 
 If an _interesting_ change is found, a tweet is published with the diff.
 
