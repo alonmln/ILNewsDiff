@@ -4,10 +4,10 @@ import logging
 
 import tweepy
 
-consumer_key = os.environ.get('NYT_TWITTER_CONSUMER_KEY')
-consumer_secret = os.environ.get('NYT_TWITTER_CONSUMER_SECRET')
-access_token = os.environ.get('NYT_TWITTER_ACCESS_TOKEN')
-access_token_secret = os.environ.get('NYT_TWITTER_ACCESS_TOKEN_SECRET')
+consumer_key = os.environ.get('TWITTER_CONSUMER_KEY')
+consumer_secret = os.environ.get('TWITTER_CONSUMER_SECRET')
+access_token = os.environ.get('TWITTER_ACCESS_TOKEN')
+access_token_secret = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET')
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.secure = True
 auth.set_access_token(access_token, access_token_secret)
