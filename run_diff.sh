@@ -10,6 +10,7 @@ export PHANTOMJS_PATH="/usr/local/bin/phantomjs"
 
 export OPENSSL_CONF=/etc/ssl/
 
+cd ~/ILNewsDiff/
 source venv/bin/activate
 python main.py
 deactivate
