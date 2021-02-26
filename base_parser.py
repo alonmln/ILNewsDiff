@@ -97,7 +97,7 @@ class BaseParser:
         if self.validate(self.get_integrity_validators(), url, previous_version['abstract'], data['abstract']):
             save_to_db = True
             if self.should_tweet(url, previous_version['abstract'], data['abstract']):
-                self.tweet_change(previous_version['abstract'], data['abstract'], "שינוי בתת כותרת", article_id, url)
+                self.tweet_change(previous_version['abstract'], data['abstract'], "שינוי בכותרת משנה", article_id, url)
 
         if save_to_db:
             self.data_provider.increase_article_version(data)
