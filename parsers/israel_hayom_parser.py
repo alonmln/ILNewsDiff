@@ -1,6 +1,7 @@
-import validators.content_validator
 from parsers import parser_utils
 from rss_parser import RSSParser
+import validators.content_validator
+import validators.israel_hayom_sports_validator
 
 ISRAEL_HAYOM_RSS = "https://www.israelhayom.co.il/rss.xml"
 
@@ -18,7 +19,7 @@ class IsraelHayomParser(RSSParser):
         return True
 
     def get_tweet_validators(self):
-        return [validators.content_validator]
+        return [validators.content_validator, validators.israel_hayom_sports_validator]
 
     def entry_to_dict(self, article):
         return parser_utils.standard_entry_to_dict(article, self.get_source(), self.tz)

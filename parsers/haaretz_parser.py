@@ -1,5 +1,6 @@
 import validators.html_validator
 import validators.content_validator
+import validators.haaretz_sports_validator
 from parsers import parser_utils
 from rss_parser import RSSParser
 
@@ -22,7 +23,7 @@ class HaaretzParser(RSSParser):
         return [validators.html_validator]
 
     def get_tweet_validators(self):
-        return [validators.content_validator]
+        return [validators.content_validator, validators.haaretz_sports_validator]
 
     def entry_to_dict(self, article):
         return parser_utils.standard_entry_to_dict(article, self.get_source(), self.tz)

@@ -47,7 +47,7 @@ class BaseParser:
         for validator in validators:
             if not validator.validate_change(url, old, new):
                 logging.info(
-                    f"Detected error. old was \n{old}\n new was \n{new}\n url {url} type: {validator.__name__}")
+                    f"Validator blocked, old was \n{old}\n new was \n{new}\n url {url} type: {validator.__name__}")
                 return False
         return True
 
