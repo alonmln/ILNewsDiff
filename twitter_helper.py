@@ -27,6 +27,8 @@ def upload_media(filename):
         return 1
     try:
         response = twitter_api.media_upload(filename)
+        logging.debug("Upload successful, deleting diff image file")
+        os.remove(filename)
     except Exception:
         print(sys.exc_info()[0])
         logging.exception('Media upload')
