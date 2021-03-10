@@ -35,6 +35,7 @@ def main():
     logging.getLogger("chardet").setLevel(logging.WARNING)
     logging.getLogger("tweepy").setLevel(logging.WARNING)
     logging.getLogger("oauthlib").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
 
     logging.info('Starting script')
 
