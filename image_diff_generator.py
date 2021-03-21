@@ -8,6 +8,7 @@ from selenium import webdriver
 
 from html_utils import strip_html
 
+PUNCTUATION_SYMBOLS = list(',-.:;!?')
 
 class ImageDiffGenerator:
     html_template = None
@@ -22,14 +23,29 @@ class ImageDiffGenerator:
 
             ImageDiffGenerator.phantomjs_path = os.environ['PHANTOMJS_PATH']
             ImageDiffGenerator.driver = webdriver.PhantomJS(executable_path=ImageDiffGenerator.phantomjs_path)
+    
+    @staticmethod
+    def separate_punctuation(s: str) -> str:
+        for pnct in PUNCTUATION_SYMBOLS:
+            s = s.replace(pnct, f' {pnct}')
+        return s
+    
+    @staticmethod
+    def restore_punctuation(hd: str) -> str:
+        for pnct in PUNCTUATION_SYMBOLS:
+            s = s.replace(f' {pnct}', pnct)
+            s = s.replace(f' <ins>{pnct}', f'<ins>{pnct}')
+            s = s.replace(f' <del>{pnct}', f'<del>{pnct}')
+        return s
 
     @staticmethod
     def generate_image_diff(old: str, new: str, text_to_tweet: str):
         ImageDiffGenerator.init()
-        stripped_old = strip_html(old)
-        stripped_new = strip_html(new)
+        stripped_old = separate_punctuation(strip_html(old))
+        stripped_new = separate_punctuation(strip_html(new))
         new_hash = hashlib.sha224(stripped_new.encode('utf8')).hexdigest()
-        diff_html = html_diff(stripped_old, stripped_new)
+        separated_diff = html_diff(stripped_old, stripped_new)
+        diff_html = restore_punctuation(separated_diff)
 
         html = ImageDiffGenerator.html_template.replace("text_to_tweet", text_to_tweet) \
             .replace("diff_html", diff_html)
