@@ -33,10 +33,10 @@ class ImageDiffGenerator:
     @staticmethod
     def restore_punctuation(hd: str) -> str:
         for pnct in PUNCTUATION_SYMBOLS:
-            s = s.replace(f' {pnct}', pnct)
-            s = s.replace(f' <ins>{pnct}', f'<ins>{pnct}')
-            s = s.replace(f' <del>{pnct}', f'<del>{pnct}')
-        return s
+            hd = hd.replace(f' {pnct}', pnct)
+            hd = hd.replace(f' <ins>{pnct}', f'<ins>{pnct}')
+            hd = hd.replace(f' <del>{pnct}', f'<del>{pnct}')
+        return hd
 
     @staticmethod
     def generate_image_diff(old: str, new: str, text_to_tweet: str):
