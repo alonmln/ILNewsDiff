@@ -41,11 +41,11 @@ class ImageDiffGenerator:
     @staticmethod
     def generate_image_diff(old: str, new: str, text_to_tweet: str):
         ImageDiffGenerator.init()
-        stripped_old = separate_punctuation(strip_html(old))
-        stripped_new = separate_punctuation(strip_html(new))
+        stripped_old = ImageDiffGenerator.separate_punctuation(strip_html(old))
+        stripped_new = ImageDiffGenerator.separate_punctuation(strip_html(new))
         new_hash = hashlib.sha224(stripped_new.encode('utf8')).hexdigest()
         separated_diff = html_diff(stripped_old, stripped_new)
-        diff_html = restore_punctuation(separated_diff)
+        diff_html = ImageDiffGenerator.restore_punctuation(separated_diff)
 
         html = ImageDiffGenerator.html_template.replace("text_to_tweet", text_to_tweet) \
             .replace("diff_html", diff_html)
